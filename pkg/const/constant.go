@@ -18,4 +18,7 @@ const (
 	TransactionForCollecting      = "collecting"
 	TransactionForPlatformBenefit = "platform-benefit"
 	TransactionForUserBenefit     = "user-benefit"
+
+	BalanceTypeIncoming  = "incoming"
+	BalanceTypeOutcoming = "outcoming"
 )

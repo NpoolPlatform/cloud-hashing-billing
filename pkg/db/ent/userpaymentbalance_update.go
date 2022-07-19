@@ -46,12 +46,6 @@ func (upbu *UserPaymentBalanceUpdate) SetPaymentID(u uuid.UUID) *UserPaymentBala
 	return upbu
 }
 
-// SetUsedByPaymentID sets the "used_by_payment_id" field.
-func (upbu *UserPaymentBalanceUpdate) SetUsedByPaymentID(u uuid.UUID) *UserPaymentBalanceUpdate {
-	upbu.mutation.SetUsedByPaymentID(u)
-	return upbu
-}
-
 // SetAmount sets the "amount" field.
 func (upbu *UserPaymentBalanceUpdate) SetAmount(u uint64) *UserPaymentBalanceUpdate {
 	upbu.mutation.ResetAmount()
@@ -88,6 +82,20 @@ func (upbu *UserPaymentBalanceUpdate) SetCoinTypeID(u uuid.UUID) *UserPaymentBal
 func (upbu *UserPaymentBalanceUpdate) SetNillableCoinTypeID(u *uuid.UUID) *UserPaymentBalanceUpdate {
 	if u != nil {
 		upbu.SetCoinTypeID(*u)
+	}
+	return upbu
+}
+
+// SetBalanceType sets the "balance_type" field.
+func (upbu *UserPaymentBalanceUpdate) SetBalanceType(s string) *UserPaymentBalanceUpdate {
+	upbu.mutation.SetBalanceType(s)
+	return upbu
+}
+
+// SetNillableBalanceType sets the "balance_type" field if the given value is not nil.
+func (upbu *UserPaymentBalanceUpdate) SetNillableBalanceType(s *string) *UserPaymentBalanceUpdate {
+	if s != nil {
+		upbu.SetBalanceType(*s)
 	}
 	return upbu
 }
@@ -254,13 +262,6 @@ func (upbu *UserPaymentBalanceUpdate) sqlSave(ctx context.Context) (n int, err e
 			Column: userpaymentbalance.FieldPaymentID,
 		})
 	}
-	if value, ok := upbu.mutation.UsedByPaymentID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: userpaymentbalance.FieldUsedByPaymentID,
-		})
-	}
 	if value, ok := upbu.mutation.Amount(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint64,
@@ -294,6 +295,13 @@ func (upbu *UserPaymentBalanceUpdate) sqlSave(ctx context.Context) (n int, err e
 			Type:   field.TypeUUID,
 			Value:  value,
 			Column: userpaymentbalance.FieldCoinTypeID,
+		})
+	}
+	if value, ok := upbu.mutation.BalanceType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: userpaymentbalance.FieldBalanceType,
 		})
 	}
 	if value, ok := upbu.mutation.CreateAt(); ok {
@@ -375,12 +383,6 @@ func (upbuo *UserPaymentBalanceUpdateOne) SetPaymentID(u uuid.UUID) *UserPayment
 	return upbuo
 }
 
-// SetUsedByPaymentID sets the "used_by_payment_id" field.
-func (upbuo *UserPaymentBalanceUpdateOne) SetUsedByPaymentID(u uuid.UUID) *UserPaymentBalanceUpdateOne {
-	upbuo.mutation.SetUsedByPaymentID(u)
-	return upbuo
-}
-
 // SetAmount sets the "amount" field.
 func (upbuo *UserPaymentBalanceUpdateOne) SetAmount(u uint64) *UserPaymentBalanceUpdateOne {
 	upbuo.mutation.ResetAmount()
@@ -417,6 +419,20 @@ func (upbuo *UserPaymentBalanceUpdateOne) SetCoinTypeID(u uuid.UUID) *UserPaymen
 func (upbuo *UserPaymentBalanceUpdateOne) SetNillableCoinTypeID(u *uuid.UUID) *UserPaymentBalanceUpdateOne {
 	if u != nil {
 		upbuo.SetCoinTypeID(*u)
+	}
+	return upbuo
+}
+
+// SetBalanceType sets the "balance_type" field.
+func (upbuo *UserPaymentBalanceUpdateOne) SetBalanceType(s string) *UserPaymentBalanceUpdateOne {
+	upbuo.mutation.SetBalanceType(s)
+	return upbuo
+}
+
+// SetNillableBalanceType sets the "balance_type" field if the given value is not nil.
+func (upbuo *UserPaymentBalanceUpdateOne) SetNillableBalanceType(s *string) *UserPaymentBalanceUpdateOne {
+	if s != nil {
+		upbuo.SetBalanceType(*s)
 	}
 	return upbuo
 }
@@ -613,13 +629,6 @@ func (upbuo *UserPaymentBalanceUpdateOne) sqlSave(ctx context.Context) (_node *U
 			Column: userpaymentbalance.FieldPaymentID,
 		})
 	}
-	if value, ok := upbuo.mutation.UsedByPaymentID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: userpaymentbalance.FieldUsedByPaymentID,
-		})
-	}
 	if value, ok := upbuo.mutation.Amount(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint64,
@@ -653,6 +662,13 @@ func (upbuo *UserPaymentBalanceUpdateOne) sqlSave(ctx context.Context) (_node *U
 			Type:   field.TypeUUID,
 			Value:  value,
 			Column: userpaymentbalance.FieldCoinTypeID,
+		})
+	}
+	if value, ok := upbuo.mutation.BalanceType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: userpaymentbalance.FieldBalanceType,
 		})
 	}
 	if value, ok := upbuo.mutation.CreateAt(); ok {

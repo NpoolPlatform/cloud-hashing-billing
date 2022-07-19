@@ -8816,12 +8816,12 @@ type UserPaymentBalanceMutation struct {
 	app_id               *uuid.UUID
 	user_id              *uuid.UUID
 	payment_id           *uuid.UUID
-	used_by_payment_id   *uuid.UUID
 	amount               *uint64
 	addamount            *int64
 	coin_usd_currency    *uint64
 	addcoin_usd_currency *int64
 	coin_type_id         *uuid.UUID
+	balance_type         *string
 	create_at            *uint32
 	addcreate_at         *int32
 	update_at            *uint32
@@ -9046,42 +9046,6 @@ func (m *UserPaymentBalanceMutation) ResetPaymentID() {
 	m.payment_id = nil
 }
 
-// SetUsedByPaymentID sets the "used_by_payment_id" field.
-func (m *UserPaymentBalanceMutation) SetUsedByPaymentID(u uuid.UUID) {
-	m.used_by_payment_id = &u
-}
-
-// UsedByPaymentID returns the value of the "used_by_payment_id" field in the mutation.
-func (m *UserPaymentBalanceMutation) UsedByPaymentID() (r uuid.UUID, exists bool) {
-	v := m.used_by_payment_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUsedByPaymentID returns the old "used_by_payment_id" field's value of the UserPaymentBalance entity.
-// If the UserPaymentBalance object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserPaymentBalanceMutation) OldUsedByPaymentID(ctx context.Context) (v uuid.UUID, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUsedByPaymentID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUsedByPaymentID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUsedByPaymentID: %w", err)
-	}
-	return oldValue.UsedByPaymentID, nil
-}
-
-// ResetUsedByPaymentID resets all changes to the "used_by_payment_id" field.
-func (m *UserPaymentBalanceMutation) ResetUsedByPaymentID() {
-	m.used_by_payment_id = nil
-}
-
 // SetAmount sets the "amount" field.
 func (m *UserPaymentBalanceMutation) SetAmount(u uint64) {
 	m.amount = &u
@@ -9228,6 +9192,42 @@ func (m *UserPaymentBalanceMutation) OldCoinTypeID(ctx context.Context) (v uuid.
 // ResetCoinTypeID resets all changes to the "coin_type_id" field.
 func (m *UserPaymentBalanceMutation) ResetCoinTypeID() {
 	m.coin_type_id = nil
+}
+
+// SetBalanceType sets the "balance_type" field.
+func (m *UserPaymentBalanceMutation) SetBalanceType(s string) {
+	m.balance_type = &s
+}
+
+// BalanceType returns the value of the "balance_type" field in the mutation.
+func (m *UserPaymentBalanceMutation) BalanceType() (r string, exists bool) {
+	v := m.balance_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBalanceType returns the old "balance_type" field's value of the UserPaymentBalance entity.
+// If the UserPaymentBalance object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserPaymentBalanceMutation) OldBalanceType(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBalanceType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBalanceType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBalanceType: %w", err)
+	}
+	return oldValue.BalanceType, nil
+}
+
+// ResetBalanceType resets all changes to the "balance_type" field.
+func (m *UserPaymentBalanceMutation) ResetBalanceType() {
+	m.balance_type = nil
 }
 
 // SetCreateAt sets the "create_at" field.
@@ -9427,9 +9427,6 @@ func (m *UserPaymentBalanceMutation) Fields() []string {
 	if m.payment_id != nil {
 		fields = append(fields, userpaymentbalance.FieldPaymentID)
 	}
-	if m.used_by_payment_id != nil {
-		fields = append(fields, userpaymentbalance.FieldUsedByPaymentID)
-	}
 	if m.amount != nil {
 		fields = append(fields, userpaymentbalance.FieldAmount)
 	}
@@ -9438,6 +9435,9 @@ func (m *UserPaymentBalanceMutation) Fields() []string {
 	}
 	if m.coin_type_id != nil {
 		fields = append(fields, userpaymentbalance.FieldCoinTypeID)
+	}
+	if m.balance_type != nil {
+		fields = append(fields, userpaymentbalance.FieldBalanceType)
 	}
 	if m.create_at != nil {
 		fields = append(fields, userpaymentbalance.FieldCreateAt)
@@ -9462,14 +9462,14 @@ func (m *UserPaymentBalanceMutation) Field(name string) (ent.Value, bool) {
 		return m.UserID()
 	case userpaymentbalance.FieldPaymentID:
 		return m.PaymentID()
-	case userpaymentbalance.FieldUsedByPaymentID:
-		return m.UsedByPaymentID()
 	case userpaymentbalance.FieldAmount:
 		return m.Amount()
 	case userpaymentbalance.FieldCoinUsdCurrency:
 		return m.CoinUsdCurrency()
 	case userpaymentbalance.FieldCoinTypeID:
 		return m.CoinTypeID()
+	case userpaymentbalance.FieldBalanceType:
+		return m.BalanceType()
 	case userpaymentbalance.FieldCreateAt:
 		return m.CreateAt()
 	case userpaymentbalance.FieldUpdateAt:
@@ -9491,14 +9491,14 @@ func (m *UserPaymentBalanceMutation) OldField(ctx context.Context, name string) 
 		return m.OldUserID(ctx)
 	case userpaymentbalance.FieldPaymentID:
 		return m.OldPaymentID(ctx)
-	case userpaymentbalance.FieldUsedByPaymentID:
-		return m.OldUsedByPaymentID(ctx)
 	case userpaymentbalance.FieldAmount:
 		return m.OldAmount(ctx)
 	case userpaymentbalance.FieldCoinUsdCurrency:
 		return m.OldCoinUsdCurrency(ctx)
 	case userpaymentbalance.FieldCoinTypeID:
 		return m.OldCoinTypeID(ctx)
+	case userpaymentbalance.FieldBalanceType:
+		return m.OldBalanceType(ctx)
 	case userpaymentbalance.FieldCreateAt:
 		return m.OldCreateAt(ctx)
 	case userpaymentbalance.FieldUpdateAt:
@@ -9535,13 +9535,6 @@ func (m *UserPaymentBalanceMutation) SetField(name string, value ent.Value) erro
 		}
 		m.SetPaymentID(v)
 		return nil
-	case userpaymentbalance.FieldUsedByPaymentID:
-		v, ok := value.(uuid.UUID)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUsedByPaymentID(v)
-		return nil
 	case userpaymentbalance.FieldAmount:
 		v, ok := value.(uint64)
 		if !ok {
@@ -9562,6 +9555,13 @@ func (m *UserPaymentBalanceMutation) SetField(name string, value ent.Value) erro
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCoinTypeID(v)
+		return nil
+	case userpaymentbalance.FieldBalanceType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBalanceType(v)
 		return nil
 	case userpaymentbalance.FieldCreateAt:
 		v, ok := value.(uint32)
@@ -9705,9 +9705,6 @@ func (m *UserPaymentBalanceMutation) ResetField(name string) error {
 	case userpaymentbalance.FieldPaymentID:
 		m.ResetPaymentID()
 		return nil
-	case userpaymentbalance.FieldUsedByPaymentID:
-		m.ResetUsedByPaymentID()
-		return nil
 	case userpaymentbalance.FieldAmount:
 		m.ResetAmount()
 		return nil
@@ -9716,6 +9713,9 @@ func (m *UserPaymentBalanceMutation) ResetField(name string) error {
 		return nil
 	case userpaymentbalance.FieldCoinTypeID:
 		m.ResetCoinTypeID()
+		return nil
+	case userpaymentbalance.FieldBalanceType:
+		m.ResetBalanceType()
 		return nil
 	case userpaymentbalance.FieldCreateAt:
 		m.ResetCreateAt()

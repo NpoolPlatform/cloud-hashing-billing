@@ -41,12 +41,6 @@ func (upbc *UserPaymentBalanceCreate) SetPaymentID(u uuid.UUID) *UserPaymentBala
 	return upbc
 }
 
-// SetUsedByPaymentID sets the "used_by_payment_id" field.
-func (upbc *UserPaymentBalanceCreate) SetUsedByPaymentID(u uuid.UUID) *UserPaymentBalanceCreate {
-	upbc.mutation.SetUsedByPaymentID(u)
-	return upbc
-}
-
 // SetAmount sets the "amount" field.
 func (upbc *UserPaymentBalanceCreate) SetAmount(u uint64) *UserPaymentBalanceCreate {
 	upbc.mutation.SetAmount(u)
@@ -69,6 +63,20 @@ func (upbc *UserPaymentBalanceCreate) SetCoinTypeID(u uuid.UUID) *UserPaymentBal
 func (upbc *UserPaymentBalanceCreate) SetNillableCoinTypeID(u *uuid.UUID) *UserPaymentBalanceCreate {
 	if u != nil {
 		upbc.SetCoinTypeID(*u)
+	}
+	return upbc
+}
+
+// SetBalanceType sets the "balance_type" field.
+func (upbc *UserPaymentBalanceCreate) SetBalanceType(s string) *UserPaymentBalanceCreate {
+	upbc.mutation.SetBalanceType(s)
+	return upbc
+}
+
+// SetNillableBalanceType sets the "balance_type" field if the given value is not nil.
+func (upbc *UserPaymentBalanceCreate) SetNillableBalanceType(s *string) *UserPaymentBalanceCreate {
+	if s != nil {
+		upbc.SetBalanceType(*s)
 	}
 	return upbc
 }
@@ -210,6 +218,10 @@ func (upbc *UserPaymentBalanceCreate) defaults() {
 		v := userpaymentbalance.DefaultCoinTypeID()
 		upbc.mutation.SetCoinTypeID(v)
 	}
+	if _, ok := upbc.mutation.BalanceType(); !ok {
+		v := userpaymentbalance.DefaultBalanceType
+		upbc.mutation.SetBalanceType(v)
+	}
 	if _, ok := upbc.mutation.CreateAt(); !ok {
 		v := userpaymentbalance.DefaultCreateAt()
 		upbc.mutation.SetCreateAt(v)
@@ -239,9 +251,6 @@ func (upbc *UserPaymentBalanceCreate) check() error {
 	if _, ok := upbc.mutation.PaymentID(); !ok {
 		return &ValidationError{Name: "payment_id", err: errors.New(`ent: missing required field "UserPaymentBalance.payment_id"`)}
 	}
-	if _, ok := upbc.mutation.UsedByPaymentID(); !ok {
-		return &ValidationError{Name: "used_by_payment_id", err: errors.New(`ent: missing required field "UserPaymentBalance.used_by_payment_id"`)}
-	}
 	if _, ok := upbc.mutation.Amount(); !ok {
 		return &ValidationError{Name: "amount", err: errors.New(`ent: missing required field "UserPaymentBalance.amount"`)}
 	}
@@ -250,6 +259,9 @@ func (upbc *UserPaymentBalanceCreate) check() error {
 	}
 	if _, ok := upbc.mutation.CoinTypeID(); !ok {
 		return &ValidationError{Name: "coin_type_id", err: errors.New(`ent: missing required field "UserPaymentBalance.coin_type_id"`)}
+	}
+	if _, ok := upbc.mutation.BalanceType(); !ok {
+		return &ValidationError{Name: "balance_type", err: errors.New(`ent: missing required field "UserPaymentBalance.balance_type"`)}
 	}
 	if _, ok := upbc.mutation.CreateAt(); !ok {
 		return &ValidationError{Name: "create_at", err: errors.New(`ent: missing required field "UserPaymentBalance.create_at"`)}
@@ -321,14 +333,6 @@ func (upbc *UserPaymentBalanceCreate) createSpec() (*UserPaymentBalance, *sqlgra
 		})
 		_node.PaymentID = value
 	}
-	if value, ok := upbc.mutation.UsedByPaymentID(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: userpaymentbalance.FieldUsedByPaymentID,
-		})
-		_node.UsedByPaymentID = value
-	}
 	if value, ok := upbc.mutation.Amount(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint64,
@@ -352,6 +356,14 @@ func (upbc *UserPaymentBalanceCreate) createSpec() (*UserPaymentBalance, *sqlgra
 			Column: userpaymentbalance.FieldCoinTypeID,
 		})
 		_node.CoinTypeID = value
+	}
+	if value, ok := upbc.mutation.BalanceType(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: userpaymentbalance.FieldBalanceType,
+		})
+		_node.BalanceType = value
 	}
 	if value, ok := upbc.mutation.CreateAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -467,18 +479,6 @@ func (u *UserPaymentBalanceUpsert) UpdatePaymentID() *UserPaymentBalanceUpsert {
 	return u
 }
 
-// SetUsedByPaymentID sets the "used_by_payment_id" field.
-func (u *UserPaymentBalanceUpsert) SetUsedByPaymentID(v uuid.UUID) *UserPaymentBalanceUpsert {
-	u.Set(userpaymentbalance.FieldUsedByPaymentID, v)
-	return u
-}
-
-// UpdateUsedByPaymentID sets the "used_by_payment_id" field to the value that was provided on create.
-func (u *UserPaymentBalanceUpsert) UpdateUsedByPaymentID() *UserPaymentBalanceUpsert {
-	u.SetExcluded(userpaymentbalance.FieldUsedByPaymentID)
-	return u
-}
-
 // SetAmount sets the "amount" field.
 func (u *UserPaymentBalanceUpsert) SetAmount(v uint64) *UserPaymentBalanceUpsert {
 	u.Set(userpaymentbalance.FieldAmount, v)
@@ -524,6 +524,18 @@ func (u *UserPaymentBalanceUpsert) SetCoinTypeID(v uuid.UUID) *UserPaymentBalanc
 // UpdateCoinTypeID sets the "coin_type_id" field to the value that was provided on create.
 func (u *UserPaymentBalanceUpsert) UpdateCoinTypeID() *UserPaymentBalanceUpsert {
 	u.SetExcluded(userpaymentbalance.FieldCoinTypeID)
+	return u
+}
+
+// SetBalanceType sets the "balance_type" field.
+func (u *UserPaymentBalanceUpsert) SetBalanceType(v string) *UserPaymentBalanceUpsert {
+	u.Set(userpaymentbalance.FieldBalanceType, v)
+	return u
+}
+
+// UpdateBalanceType sets the "balance_type" field to the value that was provided on create.
+func (u *UserPaymentBalanceUpsert) UpdateBalanceType() *UserPaymentBalanceUpsert {
+	u.SetExcluded(userpaymentbalance.FieldBalanceType)
 	return u
 }
 
@@ -673,20 +685,6 @@ func (u *UserPaymentBalanceUpsertOne) UpdatePaymentID() *UserPaymentBalanceUpser
 	})
 }
 
-// SetUsedByPaymentID sets the "used_by_payment_id" field.
-func (u *UserPaymentBalanceUpsertOne) SetUsedByPaymentID(v uuid.UUID) *UserPaymentBalanceUpsertOne {
-	return u.Update(func(s *UserPaymentBalanceUpsert) {
-		s.SetUsedByPaymentID(v)
-	})
-}
-
-// UpdateUsedByPaymentID sets the "used_by_payment_id" field to the value that was provided on create.
-func (u *UserPaymentBalanceUpsertOne) UpdateUsedByPaymentID() *UserPaymentBalanceUpsertOne {
-	return u.Update(func(s *UserPaymentBalanceUpsert) {
-		s.UpdateUsedByPaymentID()
-	})
-}
-
 // SetAmount sets the "amount" field.
 func (u *UserPaymentBalanceUpsertOne) SetAmount(v uint64) *UserPaymentBalanceUpsertOne {
 	return u.Update(func(s *UserPaymentBalanceUpsert) {
@@ -740,6 +738,20 @@ func (u *UserPaymentBalanceUpsertOne) SetCoinTypeID(v uuid.UUID) *UserPaymentBal
 func (u *UserPaymentBalanceUpsertOne) UpdateCoinTypeID() *UserPaymentBalanceUpsertOne {
 	return u.Update(func(s *UserPaymentBalanceUpsert) {
 		s.UpdateCoinTypeID()
+	})
+}
+
+// SetBalanceType sets the "balance_type" field.
+func (u *UserPaymentBalanceUpsertOne) SetBalanceType(v string) *UserPaymentBalanceUpsertOne {
+	return u.Update(func(s *UserPaymentBalanceUpsert) {
+		s.SetBalanceType(v)
+	})
+}
+
+// UpdateBalanceType sets the "balance_type" field to the value that was provided on create.
+func (u *UserPaymentBalanceUpsertOne) UpdateBalanceType() *UserPaymentBalanceUpsertOne {
+	return u.Update(func(s *UserPaymentBalanceUpsert) {
+		s.UpdateBalanceType()
 	})
 }
 
@@ -1064,20 +1076,6 @@ func (u *UserPaymentBalanceUpsertBulk) UpdatePaymentID() *UserPaymentBalanceUpse
 	})
 }
 
-// SetUsedByPaymentID sets the "used_by_payment_id" field.
-func (u *UserPaymentBalanceUpsertBulk) SetUsedByPaymentID(v uuid.UUID) *UserPaymentBalanceUpsertBulk {
-	return u.Update(func(s *UserPaymentBalanceUpsert) {
-		s.SetUsedByPaymentID(v)
-	})
-}
-
-// UpdateUsedByPaymentID sets the "used_by_payment_id" field to the value that was provided on create.
-func (u *UserPaymentBalanceUpsertBulk) UpdateUsedByPaymentID() *UserPaymentBalanceUpsertBulk {
-	return u.Update(func(s *UserPaymentBalanceUpsert) {
-		s.UpdateUsedByPaymentID()
-	})
-}
-
 // SetAmount sets the "amount" field.
 func (u *UserPaymentBalanceUpsertBulk) SetAmount(v uint64) *UserPaymentBalanceUpsertBulk {
 	return u.Update(func(s *UserPaymentBalanceUpsert) {
@@ -1131,6 +1129,20 @@ func (u *UserPaymentBalanceUpsertBulk) SetCoinTypeID(v uuid.UUID) *UserPaymentBa
 func (u *UserPaymentBalanceUpsertBulk) UpdateCoinTypeID() *UserPaymentBalanceUpsertBulk {
 	return u.Update(func(s *UserPaymentBalanceUpsert) {
 		s.UpdateCoinTypeID()
+	})
+}
+
+// SetBalanceType sets the "balance_type" field.
+func (u *UserPaymentBalanceUpsertBulk) SetBalanceType(v string) *UserPaymentBalanceUpsertBulk {
+	return u.Update(func(s *UserPaymentBalanceUpsert) {
+		s.SetBalanceType(v)
+	})
+}
+
+// UpdateBalanceType sets the "balance_type" field to the value that was provided on create.
+func (u *UserPaymentBalanceUpsertBulk) UpdateBalanceType() *UserPaymentBalanceUpsertBulk {
+	return u.Update(func(s *UserPaymentBalanceUpsert) {
+		s.UpdateBalanceType()
 	})
 }
 

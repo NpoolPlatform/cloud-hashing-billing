@@ -243,9 +243,13 @@ func init() {
 	userpaymentbalanceFields := schema.UserPaymentBalance{}.Fields()
 	_ = userpaymentbalanceFields
 	// userpaymentbalanceDescCoinTypeID is the schema descriptor for coin_type_id field.
-	userpaymentbalanceDescCoinTypeID := userpaymentbalanceFields[7].Descriptor()
+	userpaymentbalanceDescCoinTypeID := userpaymentbalanceFields[6].Descriptor()
 	// userpaymentbalance.DefaultCoinTypeID holds the default value on creation for the coin_type_id field.
 	userpaymentbalance.DefaultCoinTypeID = userpaymentbalanceDescCoinTypeID.Default.(func() uuid.UUID)
+	// userpaymentbalanceDescBalanceType is the schema descriptor for balance_type field.
+	userpaymentbalanceDescBalanceType := userpaymentbalanceFields[7].Descriptor()
+	// userpaymentbalance.DefaultBalanceType holds the default value on creation for the balance_type field.
+	userpaymentbalance.DefaultBalanceType = userpaymentbalanceDescBalanceType.Default.(string)
 	// userpaymentbalanceDescCreateAt is the schema descriptor for create_at field.
 	userpaymentbalanceDescCreateAt := userpaymentbalanceFields[8].Descriptor()
 	// userpaymentbalance.DefaultCreateAt holds the default value on creation for the create_at field.

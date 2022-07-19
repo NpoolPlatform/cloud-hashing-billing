@@ -100,13 +100,6 @@ func PaymentID(v uuid.UUID) predicate.UserPaymentBalance {
 	})
 }
 
-// UsedByPaymentID applies equality check predicate on the "used_by_payment_id" field. It's identical to UsedByPaymentIDEQ.
-func UsedByPaymentID(v uuid.UUID) predicate.UserPaymentBalance {
-	return predicate.UserPaymentBalance(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldUsedByPaymentID), v))
-	})
-}
-
 // Amount applies equality check predicate on the "amount" field. It's identical to AmountEQ.
 func Amount(v uint64) predicate.UserPaymentBalance {
 	return predicate.UserPaymentBalance(func(s *sql.Selector) {
@@ -125,6 +118,13 @@ func CoinUsdCurrency(v uint64) predicate.UserPaymentBalance {
 func CoinTypeID(v uuid.UUID) predicate.UserPaymentBalance {
 	return predicate.UserPaymentBalance(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldCoinTypeID), v))
+	})
+}
+
+// BalanceType applies equality check predicate on the "balance_type" field. It's identical to BalanceTypeEQ.
+func BalanceType(v string) predicate.UserPaymentBalance {
+	return predicate.UserPaymentBalance(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldBalanceType), v))
 	})
 }
 
@@ -377,82 +377,6 @@ func PaymentIDLTE(v uuid.UUID) predicate.UserPaymentBalance {
 	})
 }
 
-// UsedByPaymentIDEQ applies the EQ predicate on the "used_by_payment_id" field.
-func UsedByPaymentIDEQ(v uuid.UUID) predicate.UserPaymentBalance {
-	return predicate.UserPaymentBalance(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldUsedByPaymentID), v))
-	})
-}
-
-// UsedByPaymentIDNEQ applies the NEQ predicate on the "used_by_payment_id" field.
-func UsedByPaymentIDNEQ(v uuid.UUID) predicate.UserPaymentBalance {
-	return predicate.UserPaymentBalance(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldUsedByPaymentID), v))
-	})
-}
-
-// UsedByPaymentIDIn applies the In predicate on the "used_by_payment_id" field.
-func UsedByPaymentIDIn(vs ...uuid.UUID) predicate.UserPaymentBalance {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.UserPaymentBalance(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
-		s.Where(sql.In(s.C(FieldUsedByPaymentID), v...))
-	})
-}
-
-// UsedByPaymentIDNotIn applies the NotIn predicate on the "used_by_payment_id" field.
-func UsedByPaymentIDNotIn(vs ...uuid.UUID) predicate.UserPaymentBalance {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.UserPaymentBalance(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
-		s.Where(sql.NotIn(s.C(FieldUsedByPaymentID), v...))
-	})
-}
-
-// UsedByPaymentIDGT applies the GT predicate on the "used_by_payment_id" field.
-func UsedByPaymentIDGT(v uuid.UUID) predicate.UserPaymentBalance {
-	return predicate.UserPaymentBalance(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldUsedByPaymentID), v))
-	})
-}
-
-// UsedByPaymentIDGTE applies the GTE predicate on the "used_by_payment_id" field.
-func UsedByPaymentIDGTE(v uuid.UUID) predicate.UserPaymentBalance {
-	return predicate.UserPaymentBalance(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldUsedByPaymentID), v))
-	})
-}
-
-// UsedByPaymentIDLT applies the LT predicate on the "used_by_payment_id" field.
-func UsedByPaymentIDLT(v uuid.UUID) predicate.UserPaymentBalance {
-	return predicate.UserPaymentBalance(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldUsedByPaymentID), v))
-	})
-}
-
-// UsedByPaymentIDLTE applies the LTE predicate on the "used_by_payment_id" field.
-func UsedByPaymentIDLTE(v uuid.UUID) predicate.UserPaymentBalance {
-	return predicate.UserPaymentBalance(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldUsedByPaymentID), v))
-	})
-}
-
 // AmountEQ applies the EQ predicate on the "amount" field.
 func AmountEQ(v uint64) predicate.UserPaymentBalance {
 	return predicate.UserPaymentBalance(func(s *sql.Selector) {
@@ -678,6 +602,117 @@ func CoinTypeIDLT(v uuid.UUID) predicate.UserPaymentBalance {
 func CoinTypeIDLTE(v uuid.UUID) predicate.UserPaymentBalance {
 	return predicate.UserPaymentBalance(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldCoinTypeID), v))
+	})
+}
+
+// BalanceTypeEQ applies the EQ predicate on the "balance_type" field.
+func BalanceTypeEQ(v string) predicate.UserPaymentBalance {
+	return predicate.UserPaymentBalance(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldBalanceType), v))
+	})
+}
+
+// BalanceTypeNEQ applies the NEQ predicate on the "balance_type" field.
+func BalanceTypeNEQ(v string) predicate.UserPaymentBalance {
+	return predicate.UserPaymentBalance(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldBalanceType), v))
+	})
+}
+
+// BalanceTypeIn applies the In predicate on the "balance_type" field.
+func BalanceTypeIn(vs ...string) predicate.UserPaymentBalance {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.UserPaymentBalance(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldBalanceType), v...))
+	})
+}
+
+// BalanceTypeNotIn applies the NotIn predicate on the "balance_type" field.
+func BalanceTypeNotIn(vs ...string) predicate.UserPaymentBalance {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.UserPaymentBalance(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldBalanceType), v...))
+	})
+}
+
+// BalanceTypeGT applies the GT predicate on the "balance_type" field.
+func BalanceTypeGT(v string) predicate.UserPaymentBalance {
+	return predicate.UserPaymentBalance(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldBalanceType), v))
+	})
+}
+
+// BalanceTypeGTE applies the GTE predicate on the "balance_type" field.
+func BalanceTypeGTE(v string) predicate.UserPaymentBalance {
+	return predicate.UserPaymentBalance(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldBalanceType), v))
+	})
+}
+
+// BalanceTypeLT applies the LT predicate on the "balance_type" field.
+func BalanceTypeLT(v string) predicate.UserPaymentBalance {
+	return predicate.UserPaymentBalance(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldBalanceType), v))
+	})
+}
+
+// BalanceTypeLTE applies the LTE predicate on the "balance_type" field.
+func BalanceTypeLTE(v string) predicate.UserPaymentBalance {
+	return predicate.UserPaymentBalance(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldBalanceType), v))
+	})
+}
+
+// BalanceTypeContains applies the Contains predicate on the "balance_type" field.
+func BalanceTypeContains(v string) predicate.UserPaymentBalance {
+	return predicate.UserPaymentBalance(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldBalanceType), v))
+	})
+}
+
+// BalanceTypeHasPrefix applies the HasPrefix predicate on the "balance_type" field.
+func BalanceTypeHasPrefix(v string) predicate.UserPaymentBalance {
+	return predicate.UserPaymentBalance(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldBalanceType), v))
+	})
+}
+
+// BalanceTypeHasSuffix applies the HasSuffix predicate on the "balance_type" field.
+func BalanceTypeHasSuffix(v string) predicate.UserPaymentBalance {
+	return predicate.UserPaymentBalance(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldBalanceType), v))
+	})
+}
+
+// BalanceTypeEqualFold applies the EqualFold predicate on the "balance_type" field.
+func BalanceTypeEqualFold(v string) predicate.UserPaymentBalance {
+	return predicate.UserPaymentBalance(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldBalanceType), v))
+	})
+}
+
+// BalanceTypeContainsFold applies the ContainsFold predicate on the "balance_type" field.
+func BalanceTypeContainsFold(v string) predicate.UserPaymentBalance {
+	return predicate.UserPaymentBalance(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldBalanceType), v))
 	})
 }
 

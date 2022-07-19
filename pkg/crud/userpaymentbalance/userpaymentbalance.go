@@ -11,6 +11,8 @@ import (
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/price"
 
+	constant "github.com/NpoolPlatform/cloud-hashing-billing/pkg/const"
+
 	"github.com/google/uuid"
 	"golang.org/x/xerrors"
 )
@@ -34,6 +36,9 @@ func validateUserPaymentBalance(info *npool.UserPaymentBalance) error {
 	if info.GetCoinUSDCurrency() <= 0 {
 		return xerrors.Errorf("invalid coin usd currency")
 	}
+	if info.GetBalanceType() != constant.BalanceTypeIncoming && info.GetBalanceType() != constant.BalanceTypeOutcoming {
+		return xerrors.Errorf("invalid balance type")
+	}
 	return nil
 }
 
@@ -43,10 +48,10 @@ func dbRowToUserPaymentBalance(row *ent.UserPaymentBalance) *npool.UserPaymentBa
 		AppID:           row.AppID.String(),
 		UserID:          row.UserID.String(),
 		PaymentID:       row.PaymentID.String(),
-		UsedByPaymentID: row.UsedByPaymentID.String(),
 		Amount:          price.DBPriceToVisualPrice(row.Amount),
 		CoinTypeID:      row.CoinTypeID.String(),
 		CoinUSDCurrency: price.DBPriceToVisualPrice(row.CoinUsdCurrency),
+		BalanceType:     row.BalanceType,
 	}
 }
 
@@ -66,11 +71,10 @@ func Create(ctx context.Context, in *npool.CreateUserPaymentBalanceRequest) (*np
 		SetAppID(uuid.MustParse(in.GetInfo().GetAppID())).
 		SetUserID(uuid.MustParse(in.GetInfo().GetUserID())).
 		SetPaymentID(uuid.MustParse(in.GetInfo().GetPaymentID())).
-		SetUsedByPaymentID(uuid.UUID{}).
 		SetAmount(price.VisualPriceToDBPrice(in.GetInfo().GetAmount())).
-		SetUsedByPaymentID(uuid.UUID{}).
 		SetCoinTypeID(uuid.MustParse(in.GetInfo().GetCoinTypeID())).
 		SetCoinUsdCurrency(price.VisualPriceToDBPrice(in.GetInfo().GetCoinUSDCurrency())).
+		SetBalanceType(in.GetInfo().GetBalanceType()).
 		Save(ctx)
 	if err != nil {
 		return nil, xerrors.Errorf("fail create user payment balance: %v", err)
@@ -91,11 +95,6 @@ func Update(ctx context.Context, in *npool.UpdateUserPaymentBalanceRequest) (*np
 		return nil, xerrors.Errorf("invalid id: %v", err)
 	}
 
-	usedByPaymentID, err := uuid.Parse(in.GetInfo().GetUsedByPaymentID())
-	if err != nil {
-		return nil, xerrors.Errorf("invalid used by payment id: %v", err)
-	}
-
 	cli, err := db.Client()
 	if err != nil {
 		return nil, xerrors.Errorf("fail get db client: %v", err)
@@ -104,7 +103,6 @@ func Update(ctx context.Context, in *npool.UpdateUserPaymentBalanceRequest) (*np
 	info, err := cli.
 		UserPaymentBalance.
 		UpdateOneID(id).
-		SetUsedByPaymentID(usedByPaymentID).
 		Save(ctx)
 	if err != nil {
 		return nil, xerrors.Errorf("fail create user payment balance: %v", err)

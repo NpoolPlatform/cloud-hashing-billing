@@ -10,6 +10,8 @@ import (
 	"github.com/NpoolPlatform/cloud-hashing-billing/pkg/test-init" //nolint
 	npool "github.com/NpoolPlatform/message/npool/cloud-hashing-billing"
 
+	constant "github.com/NpoolPlatform/cloud-hashing-billing/pkg/const"
+
 	"github.com/google/uuid"
 
 	"github.com/stretchr/testify/assert"
@@ -31,6 +33,7 @@ func assertUserPaymentBalance(t *testing.T, actual, expected *npool.UserPaymentB
 	assert.Equal(t, actual.Amount, expected.Amount)
 	assert.Equal(t, actual.CoinTypeID, expected.CoinTypeID)
 	assert.Equal(t, actual.CoinUSDCurrency, expected.CoinUSDCurrency)
+	assert.Equal(t, actual.BalanceType, expected.BalanceType)
 }
 
 func TestCRUD(t *testing.T) {
@@ -43,6 +46,7 @@ func TestCRUD(t *testing.T) {
 		UserID:          uuid.New().String(),
 		PaymentID:       uuid.New().String(),
 		CoinTypeID:      uuid.New().String(),
+		BalanceType:     constant.BalanceTypeIncoming,
 		Amount:          1.0,
 		CoinUSDCurrency: 1.0,
 	}

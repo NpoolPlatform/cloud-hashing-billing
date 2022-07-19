@@ -17,14 +17,14 @@ const (
 	FieldUserID = "user_id"
 	// FieldPaymentID holds the string denoting the payment_id field in the database.
 	FieldPaymentID = "payment_id"
-	// FieldUsedByPaymentID holds the string denoting the used_by_payment_id field in the database.
-	FieldUsedByPaymentID = "used_by_payment_id"
 	// FieldAmount holds the string denoting the amount field in the database.
 	FieldAmount = "amount"
 	// FieldCoinUsdCurrency holds the string denoting the coin_usd_currency field in the database.
 	FieldCoinUsdCurrency = "coin_usd_currency"
 	// FieldCoinTypeID holds the string denoting the coin_type_id field in the database.
 	FieldCoinTypeID = "coin_type_id"
+	// FieldBalanceType holds the string denoting the balance_type field in the database.
+	FieldBalanceType = "balance_type"
 	// FieldCreateAt holds the string denoting the create_at field in the database.
 	FieldCreateAt = "create_at"
 	// FieldUpdateAt holds the string denoting the update_at field in the database.
@@ -41,10 +41,10 @@ var Columns = []string{
 	FieldAppID,
 	FieldUserID,
 	FieldPaymentID,
-	FieldUsedByPaymentID,
 	FieldAmount,
 	FieldCoinUsdCurrency,
 	FieldCoinTypeID,
+	FieldBalanceType,
 	FieldCreateAt,
 	FieldUpdateAt,
 	FieldDeleteAt,
@@ -63,6 +63,8 @@ func ValidColumn(column string) bool {
 var (
 	// DefaultCoinTypeID holds the default value on creation for the "coin_type_id" field.
 	DefaultCoinTypeID func() uuid.UUID
+	// DefaultBalanceType holds the default value on creation for the "balance_type" field.
+	DefaultBalanceType string
 	// DefaultCreateAt holds the default value on creation for the "create_at" field.
 	DefaultCreateAt func() uint32
 	// DefaultUpdateAt holds the default value on creation for the "update_at" field.

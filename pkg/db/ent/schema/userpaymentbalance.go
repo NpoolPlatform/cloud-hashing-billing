@@ -7,6 +7,8 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
+	constant "github.com/NpoolPlatform/cloud-hashing-billing/pkg/const"
+
 	"github.com/google/uuid"
 )
 
@@ -24,13 +26,14 @@ func (UserPaymentBalance) Fields() []ent.Field {
 		field.UUID("app_id", uuid.UUID{}),
 		field.UUID("user_id", uuid.UUID{}),
 		field.UUID("payment_id", uuid.UUID{}),
-		field.UUID("used_by_payment_id", uuid.UUID{}),
 		field.Uint64("amount"),
 		field.Uint64("coin_usd_currency"),
 		field.UUID("coin_type_id", uuid.UUID{}).
 			Default(func() uuid.UUID {
 				return uuid.UUID{}
 			}),
+		field.String("balance_type").
+			Default(constant.BalanceTypeIncoming),
 		field.Uint32("create_at").
 			DefaultFunc(func() uint32 {
 				return uint32(time.Now().Unix())

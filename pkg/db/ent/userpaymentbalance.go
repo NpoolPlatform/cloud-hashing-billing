@@ -22,14 +22,14 @@ type UserPaymentBalance struct {
 	UserID uuid.UUID `json:"user_id,omitempty"`
 	// PaymentID holds the value of the "payment_id" field.
 	PaymentID uuid.UUID `json:"payment_id,omitempty"`
-	// UsedByPaymentID holds the value of the "used_by_payment_id" field.
-	UsedByPaymentID uuid.UUID `json:"used_by_payment_id,omitempty"`
 	// Amount holds the value of the "amount" field.
 	Amount uint64 `json:"amount,omitempty"`
 	// CoinUsdCurrency holds the value of the "coin_usd_currency" field.
 	CoinUsdCurrency uint64 `json:"coin_usd_currency,omitempty"`
 	// CoinTypeID holds the value of the "coin_type_id" field.
 	CoinTypeID uuid.UUID `json:"coin_type_id,omitempty"`
+	// BalanceType holds the value of the "balance_type" field.
+	BalanceType string `json:"balance_type,omitempty"`
 	// CreateAt holds the value of the "create_at" field.
 	CreateAt uint32 `json:"create_at,omitempty"`
 	// UpdateAt holds the value of the "update_at" field.
@@ -45,7 +45,9 @@ func (*UserPaymentBalance) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case userpaymentbalance.FieldAmount, userpaymentbalance.FieldCoinUsdCurrency, userpaymentbalance.FieldCreateAt, userpaymentbalance.FieldUpdateAt, userpaymentbalance.FieldDeleteAt:
 			values[i] = new(sql.NullInt64)
-		case userpaymentbalance.FieldID, userpaymentbalance.FieldAppID, userpaymentbalance.FieldUserID, userpaymentbalance.FieldPaymentID, userpaymentbalance.FieldUsedByPaymentID, userpaymentbalance.FieldCoinTypeID:
+		case userpaymentbalance.FieldBalanceType:
+			values[i] = new(sql.NullString)
+		case userpaymentbalance.FieldID, userpaymentbalance.FieldAppID, userpaymentbalance.FieldUserID, userpaymentbalance.FieldPaymentID, userpaymentbalance.FieldCoinTypeID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type UserPaymentBalance", columns[i])
@@ -86,12 +88,6 @@ func (upb *UserPaymentBalance) assignValues(columns []string, values []interface
 			} else if value != nil {
 				upb.PaymentID = *value
 			}
-		case userpaymentbalance.FieldUsedByPaymentID:
-			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field used_by_payment_id", values[i])
-			} else if value != nil {
-				upb.UsedByPaymentID = *value
-			}
 		case userpaymentbalance.FieldAmount:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field amount", values[i])
@@ -109,6 +105,12 @@ func (upb *UserPaymentBalance) assignValues(columns []string, values []interface
 				return fmt.Errorf("unexpected type %T for field coin_type_id", values[i])
 			} else if value != nil {
 				upb.CoinTypeID = *value
+			}
+		case userpaymentbalance.FieldBalanceType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field balance_type", values[i])
+			} else if value.Valid {
+				upb.BalanceType = value.String
 			}
 		case userpaymentbalance.FieldCreateAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -165,9 +167,6 @@ func (upb *UserPaymentBalance) String() string {
 	builder.WriteString("payment_id=")
 	builder.WriteString(fmt.Sprintf("%v", upb.PaymentID))
 	builder.WriteString(", ")
-	builder.WriteString("used_by_payment_id=")
-	builder.WriteString(fmt.Sprintf("%v", upb.UsedByPaymentID))
-	builder.WriteString(", ")
 	builder.WriteString("amount=")
 	builder.WriteString(fmt.Sprintf("%v", upb.Amount))
 	builder.WriteString(", ")
@@ -176,6 +175,9 @@ func (upb *UserPaymentBalance) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("coin_type_id=")
 	builder.WriteString(fmt.Sprintf("%v", upb.CoinTypeID))
+	builder.WriteString(", ")
+	builder.WriteString("balance_type=")
+	builder.WriteString(upb.BalanceType)
 	builder.WriteString(", ")
 	builder.WriteString("create_at=")
 	builder.WriteString(fmt.Sprintf("%v", upb.CreateAt))
